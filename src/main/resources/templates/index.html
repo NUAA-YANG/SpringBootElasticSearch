@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>仿京东搜索高亮实战</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+
+<body class="pg">
+<!--绑定可修改的区域-->
+<div class="page" id="app">
+    <div id="mallPage" class=" mallist tmall- page-not-market ">
+
+        <!-- 头部搜索 -->
+        <div id="header" class=" header-list-app">
+            <div class="headerLayout">
+                <div class="headerCon ">
+                    <!-- Logo-->
+                    <h1 id="mallLogo">
+                        <img th:src="@{/images/jdlogo.png}" alt="">
+                    </h1>
+
+                    <div class="header-extra">
+
+                        <!--搜索-->
+                        <div id="mallSearch" class="mall-search">
+                            <form name="searchTop" class="mallSearch-form clearfix">
+                                <fieldset>
+                                    <legend>天猫搜索</legend>
+                                    <div class="mallSearch-input clearfix">
+                                        <div class="s-combobox" id="s-combobox-685">
+                                            <div class="s-combobox-input-wrap">
+<!--                                                绑定可获取的关键字标签v-model-->
+                                                <input v-model="keyword" type="text" autocomplete="off" value="dd" id="mq"
+                                                       class="s-combobox-input" aria-haspopup="true">
+                                            </div>
+                                        </div>
+<!--                                        添加点击事件-->
+                                        <button type="submit" @click.prevent="searchKey" id="searchbtn">搜索</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                            <ul class="relKeyTop">
+                                <li><a>数据库</a></li>
+                                <li><a>Java进阶</a></li>
+                                <li><a>Linux基本操作</a></li>
+                                <li><a>NFV原理</a></li>
+                                <li><a>SDN</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品详情页面 -->
+        <div id="content">
+            <div class="main">
+                <!-- 品牌分类 -->
+                <form class="navAttrsForm">
+                    <div class="attrs j_NavAttrs" style="display:block">
+                        <div class="brandAttr j_nav_brand">
+                            <div class="j_Brand attr">
+                                <div class="attrKey">
+                                    品牌
+                                </div>
+                                <div class="attrValues">
+                                    <ul class="av-collapse row-2">
+                                        <li><a href="#"> NUAA </a></li>
+                                        <li><a href="#"> CS </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 排序规则 -->
+                <div class="filter clearfix">
+                    <a class="fSort fSort-cur">综合<i class="f-ico-arrow-d"></i></a>
+                    <a class="fSort">人气<i class="f-ico-arrow-d"></i></a>
+                    <a class="fSort">新品<i class="f-ico-arrow-d"></i></a>
+                    <a class="fSort">销量<i class="f-ico-arrow-d"></i></a>
+                    <a class="fSort">价格<i class="f-ico-triangle-mt"></i><i class="f-ico-triangle-mb"></i></a>
+                </div>
+
+                <!-- 商品详情 -->
+                <div class="view grid-nosku">
+
+<!--                    拿到请求获取的的results结果，开始遍历-->
+                    <div class="product" v-for="result in results">
+                        <div class="product-iWrap">
+                            <!--商品封面-->
+                            <div class="productImg-wrap">
+                                <a class="productImg">
+<!--                                    绑定的是对象content的属性-->
+                                    <img :src="result.img">
+                                </a>
+                            </div>
+                            <!--价格-->
+                            <p class="productPrice">
+                                <em>{{result.price}}</em>
+                            </p>
+                            <!--遍历对象的属性-->
+                            <p class="productTitle">
+                                <a v-html="result.title">  </a>
+                            </p>
+                            <!-- 店铺名 -->
+                            <div class="productShop">
+                                <span>店铺： YZX的小店 </span>
+                            </div>
+                            <!-- 成交信息 -->
+                            <p class="productStatus">
+                                <span>月成交<em>999笔</em></span>
+                                <span>评价 <a>3</a></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--前端使用vue-->
+<script th:src="@{/js/vue.min.js}"></script>
+<script th:src="@{/js/axios.min.js}"></script>
+<script>
+    new Vue({
+        //绑定id为app的搜索区域
+        el:"#app",
+        data:{
+            "keyword": '', // 搜索的关键字
+            "results":[] // 后端返回的结果
+        },
+        methods:{
+            //绑定了搜索框中的点击方法
+            searchKey(){
+                var keyword = this.keyword;
+                console.log(keyword);
+                //访问后端的请求
+                axios.get('search/'+keyword+'/0/20').then(response=>{
+                    //控制台可获取响应的查询结果
+                    console.log(response.data);
+                    //将这个结果赋值给当前的results
+                    this.results=response.data;
+                })
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
