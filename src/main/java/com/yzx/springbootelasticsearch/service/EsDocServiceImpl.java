@@ -127,7 +127,6 @@ public class EsDocServiceImpl implements EsDocService{
     @Transactional
     @Override
     public List<Map<String, Object>> searchDoc(String param, String searchWord, Integer from, Integer size) throws IOException {
-        //System.out.println("keyword:"+searchWord);
         //构建搜索类
         SearchSourceBuilder searchBuilder = new SearchSourceBuilder();
 
@@ -140,7 +139,7 @@ public class EsDocServiceImpl implements EsDocService{
         //高亮
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         //设置高亮的字段
-        highlightBuilder.field("title");
+        highlightBuilder.field(param);
         //多个高亮显示
         highlightBuilder.requireFieldMatch(false);
         highlightBuilder.preTags("<span style='color:red'>");
@@ -172,15 +171,15 @@ public class EsDocServiceImpl implements EsDocService{
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
             //获取全部的高亮字段
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
-            HighlightField title = highlightFields.get("title");
-            //开始替换
+            HighlightField title = highlightFields.get(param);
+            //开始替换，将旧的title值替换为高亮的值
             if (title != null){
                 Text[] fragments = title.getFragments();
                 StringBuilder newTitle = new StringBuilder();
                 for (Text text:fragments){
                     newTitle.append(text);
                 }
-                sourceAsMap.put("title",newTitle);
+                sourceAsMap.put(param,newTitle);
             }
             //再次添加进去
             list.add(sourceAsMap);

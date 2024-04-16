@@ -49,7 +49,7 @@ public class HtmlParseUtil {
     }
 
     public static void main(String[] args) throws IOException {
-        List<Content> javaList = new HtmlParseUtil().parseJD("数据库");
+        List<Content> javaList = new HtmlParseUtil().parseJD("java书");
         for (Content content:javaList){
             System.out.println(content);
         }
